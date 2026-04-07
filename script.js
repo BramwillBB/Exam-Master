@@ -193,8 +193,8 @@ function generateSchedule(filterSubject = null) {
             </div>
             <div class="sittings-list">`;
 
-        // TWO Sessions per Day (Guided Morning + Exam Afternoon)
-        if (q.length >= 2) {
+        // TWO Sessions per Day (Guided Morning + Exam Afternoon) IF SAME PAPER TYPE
+        if (q.length >= 2 && q[0].split(' ')[0] === q[1].split(' ')[0]) {
             const p1Name = q.shift();
             const p2Name = q.shift();
             
@@ -212,12 +212,13 @@ function generateSchedule(filterSubject = null) {
 
             // Afternoon – Exam (Same Paper Type, different year)
             html += sittingHTML(ePaper, 'Exam Condition', '15:00 – 18:00', eId, checks[eId]);
-        } else if (q.length === 1) {
-            // Single session if only one paper left
+        } else if (q.length >= 1) {
+            // Single session if only one paper left or paper types don't match
             const pName = q.shift();
             const id = `sched_g_${activeSubj}_${pName}`.replace(/\s+/g,'_');
             html += sittingHTML({subject:activeSubj, name:pName}, 'Guided', '08:30 – 13:30', id, checks[id]);
         }
+
 
         html += `</div>`;
         card.innerHTML = html;
