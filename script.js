@@ -349,6 +349,10 @@ document.querySelectorAll('.nav-item').forEach(item => {
         const subj = item.dataset.subject;
         generateSchedule(subj === 'all' ? null : subj);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Close mobile sidebar
+        document.querySelector('aside').classList.remove('sidebar-open');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        if (menuBtn) menuBtn.classList.remove('active');
     });
 });
 
