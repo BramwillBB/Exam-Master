@@ -215,9 +215,10 @@ function generateSchedule(filterSubject = null) {
         } else if (q.length >= 1) {
             // Single session if only one paper left or paper types don't match
             const pName = q.shift();
-            const id = `sched_g_${activeSubj}_${pName}`.replace(/\s+/g,'_');
-            html += sittingHTML({subject:activeSubj, name:pName}, 'Guided', '08:30 – 13:30', id, checks[id]);
+            const id = `sched_e_${activeSubj}_${pName}`.replace(/\s+/g,'_');
+            html += sittingHTML({subject:activeSubj, name:pName}, 'Exam Condition', '08:30 – 11:30', id, checks[id]);
         }
+
 
 
         html += `</div>`;
