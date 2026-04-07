@@ -15,20 +15,19 @@
     <aside>
         <div class="logo">EXAM MASTER</div>
 
-        <!-- Cloud Sync Panel -->
-        <section class="timer-panel" id="sync-panel" style="margin-bottom: 1rem; border: 1px solid #27ae60; background: rgba(39, 174, 96, 0.05);">
-            <div class="timer-label" style="text-align: center; font-weight: 800; color: #27ae60; margin-bottom: 0.5rem;">Cloud Sync</div>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <input type="text" id="sync-id-input" placeholder="Enter Unique Study Key..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.75rem;">
-                <div style="display: flex; gap: 0.25rem;">
-                    <button class="timer-btn" onclick="initializeCloudSync()" style="background: #27ae60; flex: 1; padding: 6px;">Connect</button>
-                    <button class="timer-btn" onclick="generateNewSyncId()" style="background: var(--text-muted); padding: 6px;">New</button>
-                </div>
-                <div id="sync-status" style="font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">Status: Local Mode</div>
-            </div>
-        </section>
+        <nav style="margin-bottom: 2rem;">
+            <ul class="nav-links" id="nav-links">
+                <li class="nav-item active" data-subject="all">All Subjects</li>
+                <li class="nav-item" data-subject="English HL">English HL</li>
+                <li class="nav-item" data-subject="Afrikaans FAL">Afrikaans FAL</li>
+                <li class="nav-item" data-subject="Mathematics">Mathematics</li>
+                <li class="nav-item" data-subject="Business Studies">Business Studies</li>
+                <li class="nav-item" data-subject="Physical Science">Physical Science</li>
+                <li class="nav-item" data-subject="Life Sciences">Life Sciences</li>
+            </ul>
+        </nav>
 
-        <!-- Pomodoro Timer (Moved Up) -->
+        <!-- Pomodoro Timer -->
         <section class="timer-panel" id="pomodoro-panel" style="margin-bottom: 1.5rem; border: 1px solid var(--primary); background: rgba(75, 123, 236, 0.03);">
             <div class="timer-label" id="timer-label" style="text-align: center; font-weight: 800; color: var(--primary);">Pomodoro</div>
             <div class="timer-mode-btns" style="transform: scale(0.8); margin-bottom: 0.25rem;">
@@ -49,17 +48,18 @@
             </div>
         </section>
 
-        <nav>
-            <ul class="nav-links" id="nav-links">
-                <li class="nav-item active" data-subject="all">All Subjects</li>
-                <li class="nav-item" data-subject="English HL">English HL</li>
-                <li class="nav-item" data-subject="Afrikaans FAL">Afrikaans FAL</li>
-                <li class="nav-item" data-subject="Mathematics">Mathematics</li>
-                <li class="nav-item" data-subject="Business Studies">Business Studies</li>
-                <li class="nav-item" data-subject="Physical Science">Physical Science</li>
-                <li class="nav-item" data-subject="Life Sciences">Life Sciences</li>
-            </ul>
-        </nav>
+        <!-- Cloud Sync Panel -->
+        <section class="timer-panel" id="sync-panel" style="margin-bottom: 1rem; border: 1px solid #27ae60; background: rgba(39, 174, 96, 0.05);">
+            <div class="timer-label" style="text-align: center; font-weight: 800; color: #27ae60; margin-bottom: 0.5rem;">Cloud Sync</div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <input type="text" id="sync-id-input" placeholder="Enter Unique Study Key..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.75rem;">
+                <div style="display: flex; gap: 0.25rem;">
+                    <button class="timer-btn" onclick="initializeCloudSync()" style="background: #27ae60; flex: 1; padding: 6px;">Connect</button>
+                    <button class="timer-btn" onclick="generateNewSyncId()" style="background: var(--text-muted); padding: 6px;">New</button>
+                </div>
+                <div id="sync-status" style="font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">Status: Local Mode</div>
+            </div>
+        </section>
     </aside>
 
     <!-- MOBILE HAMBURGER -->
