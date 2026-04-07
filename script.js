@@ -149,18 +149,20 @@ function generateSchedule(filterSubject = null) {
         if (dayOfWeek === 0) {
             sundayCount++;
             if (sundayCount % 2 === 0) {
-                const dateStr = currentDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
-                const card = document.createElement('div');
-                card.className = 'day-card animate-fade';
-                card.innerHTML = `
-                    <div class="day-header">
-                        <span class="day-date">${dateStr}</span>
-                        <span class="subject-tag" style="background:var(--secondary);color:#fff;">RECHARGE DAY</span>
-                    </div>
-                    <div class="break-row" style="background:rgba(230, 126, 34, 0.05); border-color:var(--secondary);">
-                        ☕ Rest & Review previous subjects
-                    </div>`;
-                listEl.appendChild(card);
+                if (!filterSubject) {
+                    const dateStr = currentDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+                    const card = document.createElement('div');
+                    card.className = 'day-card animate-fade';
+                    card.innerHTML = `
+                        <div class="day-header">
+                            <span class="day-date">${dateStr}</span>
+                            <span class="subject-tag" style="background:var(--secondary);color:#fff;">RECHARGE DAY</span>
+                        </div>
+                        <div class="break-row" style="background:rgba(230, 126, 34, 0.05); border-color:var(--secondary);">
+                            ☕ Rest & Review previous subjects
+                        </div>`;
+                    listEl.appendChild(card);
+                }
                 continue;
             }
         }
@@ -176,12 +178,6 @@ function generateSchedule(filterSubject = null) {
             attempts++;
         }
         
-        // Filter: skip if doesn't match subject (except rest days)
-        if (filterSubject && activeSubj !== filterSubject && dayOfWeek !== 0) {
-            subjIdx++;
-            continue; 
-        }
-
         subjIdx++;
 
         const card = document.createElement('div');
@@ -225,7 +221,11 @@ function generateSchedule(filterSubject = null) {
 
         html += `</div>`;
         card.innerHTML = html;
-        listEl.appendChild(card);
+        
+        // Append only if we aren't filtering, or if it strictly matches the filter
+        if (!filterSubject || activeSubj === filterSubject) {
+            listEl.appendChild(card);
+        }
     }
 }
 
