@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Master – Preparation Tracker 2026</title>
+    <meta name="description" content="Track exam preparation progress for Grade 12 NSC 2026 with scheduled sittings and performance analytics.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- LEFT SIDEBAR -->
+    <aside>
+        <div class="logo">EXAM MASTER</div>
+
+        <!-- Cloud Sync Panel -->
+        <section class="timer-panel" id="sync-panel" style="margin-bottom: 1rem; border: 1px solid #27ae60; background: rgba(39, 174, 96, 0.05);">
+            <div class="timer-label" style="text-align: center; font-weight: 800; color: #27ae60; margin-bottom: 0.5rem;">Cloud Sync</div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <input type="text" id="sync-id-input" placeholder="Enter Unique Study Key..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.75rem;">
+                <div style="display: flex; gap: 0.25rem;">
+                    <button class="timer-btn" onclick="initializeCloudSync()" style="background: #27ae60; flex: 1; padding: 6px;">Connect</button>
+                    <button class="timer-btn" onclick="generateNewSyncId()" style="background: var(--text-muted); padding: 6px;">New</button>
+                </div>
+                <div id="sync-status" style="font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">Status: Local Mode</div>
+            </div>
+        </section>
+
+        <!-- Pomodoro Timer (Moved Up) -->
+        <section class="timer-panel" id="pomodoro-panel" style="margin-bottom: 1.5rem; border: 1px solid var(--primary); background: rgba(75, 123, 236, 0.03);">
+            <div class="timer-label" id="timer-label" style="text-align: center; font-weight: 800; color: var(--primary);">Pomodoro</div>
+            <div class="timer-mode-btns" style="transform: scale(0.8); margin-bottom: 0.25rem;">
+                <button class="mode-btn active" onclick="setTimerMode('pomodoro')">40</button>
+                <button class="mode-btn" onclick="setTimerMode('short')">10</button>
+                <button class="mode-btn" onclick="setTimerMode('lunch')">60</button>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 0.5rem 0;">
+                <button class="mode-btn" onclick="adjustTimer(-60)" title="Back 1 min" style="padding: 4px 8px;">⏮</button>
+                <div class="timer-display" id="timer-display" style="font-size: 1.75rem; min-width: 80px; text-align: center; color: var(--primary);">40:00</div>
+                <button class="mode-btn" onclick="adjustTimer(60)" title="Forward 1 min" style="padding: 4px 8px;">⏭</button>
+            </div>
+
+            <div class="timer-btns" style="gap: 0.25rem;">
+                <button class="timer-btn btn-start" id="timer-start-btn" onclick="toggleTimer()" style="flex: 2; font-size: 0.75rem; padding: 0.5rem;">Start / Pause</button>
+                <button class="timer-btn btn-reset" onclick="resetTimer()" style="flex: 1; font-size: 0.75rem; padding: 0.5rem;">Reset</button>
+            </div>
+        </section>
+
+        <nav>
+            <ul class="nav-links" id="nav-links">
+                <li class="nav-item active" data-subject="all">All Subjects</li>
+                <li class="nav-item" data-subject="English HL">English HL</li>
+                <li class="nav-item" data-subject="Afrikaans FAL">Afrikaans FAL</li>
+                <li class="nav-item" data-subject="Mathematics">Mathematics</li>
+                <li class="nav-item" data-subject="Business Studies">Business Studies</li>
+                <li class="nav-item" data-subject="Physical Science">Physical Science</li>
+                <li class="nav-item" data-subject="Life Sciences">Life Sciences</li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- CENTER CONTENT -->
+    <main>
+        <header class="header">
+            <div>
+                <h1 id="main-title" style="color: var(--primary); letter-spacing: 1px; font-size: 1.5rem;">STUDY PLAN</h1>
+                <p style="color: var(--text-muted); font-size: 0.75rem;">Preparation Phase • June 2026</p>
+            </div>
+            <div style="text-align: right;">
+                <p class="stat-label">Days Remaining</p>
+                <div style="font-size: 1.4rem; color: var(--secondary); font-weight: 800; line-height: 1;" id="days-countdown">33</div>
+            </div>
+        </header>
+
+        <section class="schedule-container">
+            <div id="schedule-list" class="days-list">
+                <!-- Schedule generated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="stats-aside">
+        <!-- Compact Exam Countdown -->
+        <section class="timer-panel" id="exam-countdown-banner" style="background: var(--primary); color: white; border: none; margin-top: 0;">
+            <div class="timer-label" style="color: rgba(255,255,255,0.8); margin-bottom: 0.75rem;">Time to First Paper</div>
+            <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: baseline;">
+                <div style="text-align: center;">
+                    <div id="cd-days" style="font-size: 1.5rem; font-weight: 800; line-height: 1;">00</div>
+                    <div style="font-size: 0.5rem; opacity: 0.8; text-transform: uppercase;">Days</div>
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 300; opacity: 0.5;">:</div>
+                <div style="text-align: center;">
+                    <div id="cd-hours" style="font-size: 1.5rem; font-weight: 800; line-height: 1;">00</div>
+                    <div style="font-size: 0.5rem; opacity: 0.8; text-transform: uppercase;">Hrs</div>
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 300; opacity: 0.5;">:</div>
+                <div style="text-align: center;">
+                    <div id="cd-mins" style="font-size: 1.5rem; font-weight: 800; line-height: 1;">00</div>
+                    <div style="font-size: 0.5rem; opacity: 0.8; text-transform: uppercase;">Min</div>
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 300; opacity: 0.5;">:</div>
+                <div style="text-align: center;">
+                    <div id="cd-secs" style="font-size: 1.5rem; font-weight: 800; line-height: 1; color: var(--secondary-light);">00</div>
+                    <div style="font-size: 0.5rem; opacity: 0.8; text-transform: uppercase;">Sec</div>
+                </div>
+            </div>
+            <div style="font-size: 0.6rem; margin-top: 0.75rem; opacity: 0.7; font-weight: 600; text-align: center;">11 MAY 2026 @ 14:00</div>
+        </section>
+
+        <!-- Overall Progress -->
+        <section class="timer-panel">
+            <div class="timer-label">Overall Completion</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.25rem;">
+                <div id="overall-percent" style="font-size: 1.75rem; font-weight: 800; color: var(--primary);">0%</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); padding-bottom: 4px;">
+                    <span id="sessions-done">0</span> / <span id="target-count">0</span> sessions
+                </div>
+            </div>
+            <div style="background: var(--glass); height: 6px; border-radius: 3px; overflow: hidden;">
+                <div id="progress-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.5s;"></div>
+            </div>
+        </section>
+
+        <!-- Exam Averages -->
+        <section class="stats-sidebar" style="flex: 1; overflow-y: auto; padding: 0.5rem;">
+            <div class="timer-label" style="text-align: center; margin-bottom: 0.75rem;">📊 Subject Averages</div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; text-align: center; border-bottom: 1px solid var(--glass); padding-bottom: 0.5rem;">
+                Overall Avg: <span id="sidebar-overall-avg" style="color: var(--secondary);">–</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="subject-averages-list">
+                <!-- SUBJECT ROWS -->
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>English HL</span><span id="sidebar-avg-English_HL">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-English_HL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>Afrikaans FAL</span><span id="sidebar-avg-Afrikaans_FAL">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-Afrikaans_FAL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>Mathematics</span><span id="sidebar-avg-Mathematics">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-Mathematics" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>Business Studies</span><span id="sidebar-avg-Business_Studies">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-Business_Studies" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>Physical Science</span><span id="sidebar-avg-Physical_Science">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-Physical_Science" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                        <span>Life Sciences</span><span id="sidebar-avg-Life_Sciences">–</span>
+                    </div>
+                    <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                        <div id="sidebar-bar-Life_Sciences" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size:0.55rem;color:var(--text-muted);margin-top:1rem;text-align:center;">🟢 ≥70% &nbsp; 🟠 ≥50% &nbsp; 🔴 &lt;50%</p>
+        </section>
+    </aside>
+
+
+    <!-- POMODORO MODAL -->
+    <div id="pomodoro-modal" class="pomodoro-modal">
+        <div class="modal-content">
+            <h2 id="modal-title" class="modal-title">Session Complete!</h2>
+            <p id="modal-msg" class="modal-msg">Take a 10 minute break to recharge.</p>
+            <button class="modal-btn" id="modal-action-btn" onclick="closeTimerModal()">Start Break Now</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
