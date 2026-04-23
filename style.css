@@ -7,7 +7,7 @@
     --success: #20bf6b;
     --danger: #eb3b5a;
     --bg-main: #f4f7f6;
-    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card: #ffffff;
     --text-main: #2d3436;
     --text-muted: #636e72;
     --glass: rgba(223, 230, 233, 0.7);
@@ -545,7 +545,8 @@ main > * {
 }
 
 .sitting.done {
-    opacity: 0.5;
+    opacity: 0.55;
+    background: rgba(244, 247, 246, 0.6);
 }
 
 .sitting-type {
@@ -734,12 +735,12 @@ main > * {
 
 /* ── Pomodoro / Timer ── */
 .timer-panel {
-    background: rgba(255,255,255,0.5) !important;
+    background: rgba(255,255,255,0.6);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 1.5rem;
     border-radius: var(--radius);
-    border: 1px solid var(--glass-border) !important;
+    border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-sm);
     text-align: center;
     margin-top: 1rem;
