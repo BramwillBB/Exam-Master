@@ -17,10 +17,12 @@ const startDate = new Date(2026, 3, 8);
 const endDate   = new Date(2026, 4, 10);
 const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
 
-// ─── Cloud Sync Config ──────────────────────────────────
+// ─── Automatic Cloud Sync Config ────────────────────────
 const SUPABASE_URL = "https://hxzevmvijojcfhmgewku.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4emV2bXZpam9qY2ZobWdld2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcxOTIsImV4cCI6MjA5MTEzMzE5Mn0.xg6C6LoXJMXWZ9CFLk1fOxjqUchWJ2uh4UPhjiW6O38";
-const SYNC_ID_KEY = 'exam_master_sync_id';
+const AUTO_SYNC_ID = 'exam-master-shared-2026';
+let realtimeChannel = null;
+let isSyncingFromRemote = false;
 
 // ─── Marks Store (persisted to localStorage) ────────────
 const MARKS_KEY = 'exam_master_marks';
@@ -31,7 +33,7 @@ function loadMarks() {
 }
 function saveMarks(m) { 
     localStorage.setItem(MARKS_KEY, JSON.stringify(m)); 
-    saveToCloud();
+    pushToCloud();
 }
 
 function loadChecks() {
@@ -39,10 +41,10 @@ function loadChecks() {
 }
 function saveChecks(c) { 
     localStorage.setItem(CHECKS_KEY, JSON.stringify(c)); 
-    saveToCloud();
+    pushToCloud();
 }
 
-// ─── Cloud Sync Logic (Direct REST API) ─────────────────
+// ─── Automatic Cloud Sync (REST API + Realtime) ─────────
 function supaFetch(path, options = {}) {
     const headers = {
         'apikey': SUPABASE_KEY,
@@ -55,64 +57,48 @@ function supaFetch(path, options = {}) {
         .catch(err => { console.warn('Cloud sync unavailable:', err); return null; });
 }
 
-async function initializeCloudSync() {
-    const input = document.getElementById('sync-id-input');
-    const syncId = input.value.trim();
-    if (!syncId) return;
-
-    localStorage.setItem(SYNC_ID_KEY, syncId);
-    const statusEl = document.getElementById('sync-status');
-    statusEl.textContent = "Connecting...";
-    statusEl.style.color = 'var(--warning)';
-    
-    const success = await syncFromCloud(syncId);
-    if (success) {
-        statusEl.textContent = "Synced: " + syncId.slice(0,8) + "...";
-        statusEl.style.color = 'var(--success)';
-        generateSchedule();
-        updateAverages();
-        updateSessionCount();
-    } else {
-        // No existing data found — push current local data up
-        await saveToCloud();
-        statusEl.textContent = "New key created: " + syncId.slice(0,8) + "...";
-        statusEl.style.color = 'var(--success)';
-    }
-}
-
-function generateNewSyncId() {
-    const newId = 'study-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 5);
-    document.getElementById('sync-id-input').value = newId;
-    initializeCloudSync();
-}
-
-async function saveToCloud() {
-    const syncId = localStorage.getItem(SYNC_ID_KEY);
-    if (!syncId) return;
+// Push current local state to Supabase and broadcast to all other clients
+async function pushToCloud() {
+    if (isSyncingFromRemote) return; // Prevent echo loops
 
     const marks = loadMarks();
     const checks = loadChecks();
-    const body = JSON.stringify({ 
-        sync_id: syncId, 
+    const payload = { 
+        sync_id: AUTO_SYNC_ID, 
         marks: marks, 
         checks: checks, 
         updated_at: new Date().toISOString() 
-    });
+    };
 
+    // 1. Save to database
     const resp = await supaFetch('study_sync', {
         method: 'POST',
         headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body: body
+        body: JSON.stringify(payload)
     });
 
     if (resp && !resp.ok) {
         const text = await resp.text();
         console.warn('Cloud save issue:', text);
     }
+
+    // 2. Broadcast change to all connected clients via Realtime channel
+    if (realtimeChannel) {
+        try {
+            realtimeChannel.send({
+                type: 'broadcast',
+                event: 'sync_update',
+                payload: { marks, checks }
+            });
+        } catch (e) {
+            console.warn('Broadcast failed:', e);
+        }
+    }
 }
 
-async function syncFromCloud(syncId) {
-    const resp = await supaFetch('study_sync?sync_id=eq.' + encodeURIComponent(syncId) + '&select=*', {
+// Pull latest state from Supabase on load
+async function pullFromCloud() {
+    const resp = await supaFetch('study_sync?sync_id=eq.' + encodeURIComponent(AUTO_SYNC_ID) + '&select=*', {
         method: 'GET',
         headers: { 'Accept': 'application/json' }
     });
@@ -127,6 +113,120 @@ async function syncFromCloud(syncId) {
     if (data.checks) localStorage.setItem(CHECKS_KEY, JSON.stringify(data.checks));
     
     return true;
+}
+
+// Apply incoming remote data and refresh the UI
+function applyRemoteData(payload) {
+    isSyncingFromRemote = true;
+    
+    if (payload.marks) localStorage.setItem(MARKS_KEY, JSON.stringify(payload.marks));
+    if (payload.checks) localStorage.setItem(CHECKS_KEY, JSON.stringify(payload.checks));
+
+    // Determine active filter
+    const activeNav = document.querySelector('.nav-item.active');
+    const filterSubject = activeNav && activeNav.dataset.subject !== 'all' ? activeNav.dataset.subject : null;
+
+    generateSchedule(filterSubject);
+    updateAverages();
+    updateSessionCount();
+
+    isSyncingFromRemote = false;
+}
+
+// Connect to Supabase Realtime to listen for changes from other devices
+function connectRealtime() {
+    const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+    const ws = new WebSocket(wsUrl);
+    const channelTopic = 'realtime:exam-master-live';
+
+    ws.onopen = () => {
+        console.log('Realtime: connected');
+        // Join the channel
+        ws.send(JSON.stringify({
+            topic: channelTopic,
+            event: 'phx_join',
+            payload: { config: { broadcast: { self: false } } },
+            ref: '1'
+        }));
+
+        // Keep alive with heartbeat every 30s
+        setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    topic: 'phoenix',
+                    event: 'heartbeat',
+                    payload: {},
+                    ref: Date.now().toString()
+                }));
+            }
+        }, 30000);
+    };
+
+    ws.onmessage = (event) => {
+        try {
+            const msg = JSON.parse(event.data);
+            if (msg.event === 'broadcast' && msg.payload && msg.payload.event === 'sync_update') {
+                console.log('Realtime: received remote update');
+                applyRemoteData(msg.payload.payload);
+            }
+        } catch (e) {
+            // Ignore non-JSON or system messages
+        }
+    };
+
+    ws.onclose = () => {
+        console.log('Realtime: disconnected, reconnecting in 3s...');
+        setTimeout(connectRealtime, 3000);
+    };
+
+    ws.onerror = (err) => {
+        console.warn('Realtime error:', err);
+    };
+
+    // Expose send capability for broadcasts
+    realtimeChannel = {
+        send: (message) => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    topic: channelTopic,
+                    event: 'broadcast',
+                    payload: message.payload ? message : { event: message.event, payload: message.payload || message },
+                    ref: Date.now().toString()
+                }));
+            }
+        }
+    };
+}
+
+// Auto-sync initialisation (called once on DOMContentLoaded)
+async function initAutoSync() {
+    // 1. Pull latest cloud data
+    const pulled = await pullFromCloud();
+    if (pulled) {
+        generateSchedule();
+        updateAverages();
+        updateSessionCount();
+    } else {
+        // First time — push local data up
+        await pushToCloud();
+    }
+
+    // 2. Connect Realtime for live updates
+    connectRealtime();
+
+    // 3. Periodic poll as fallback (every 30 seconds)
+    setInterval(async () => {
+        const refreshed = await pullFromCloud();
+        if (refreshed) {
+            isSyncingFromRemote = true;
+            const activeNav = document.querySelector('.nav-item.active');
+            const filterSubject = activeNav && activeNav.dataset.subject !== 'all' ? activeNav.dataset.subject : null;
+            generateSchedule(filterSubject);
+            updateAverages();
+            updateSessionCount();
+            isSyncingFromRemote = false;
+        }
+    }, 30000);
 }
 
 // ─── Schedule Generation ────────────────────────────────
@@ -514,10 +614,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Initialization error:", e);
     }
 
-    // 4. CLOUD SYNC IN BACKGROUND (non-blocking)
-    const syncId = localStorage.getItem(SYNC_ID_KEY);
-    if (syncId) {
-        document.getElementById('sync-id-input').value = syncId;
-        initializeCloudSync().catch(err => console.warn('Sync error:', err));
-    }
+    // 4. AUTOMATIC CLOUD SYNC (non-blocking, no user action required)
+    initAutoSync().catch(err => console.warn('Auto-sync error:', err));
 });

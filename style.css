@@ -161,46 +161,102 @@ body {
 
     /* Day cards */
     .day-card {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     .day-header {
         margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     .day-date {
         font-size: 0.85rem;
     }
 
-    /* Session rows stack vertically on mobile */
+    /* ── Mobile Session Cards ── */
     .sitting {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        gap: 0.5rem;
-        padding: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
         border-left-width: 3px;
+        border-radius: 8px;
     }
 
     .sitting:hover {
-        transform: none; /* disable desktop hover shift */
+        transform: none;
     }
 
-    /* Make mark input bigger for touch */
-    .mark-input {
-        width: 64px;
-        font-size: 0.85rem;
-        padding: 6px 8px;
-    }
-
-    /* Checkbox bigger for touch */
-    .session-check {
+    /* Row 1: Checkbox + Type + Time — all on one line */
+    .sitting .session-check {
         width: 22px;
         height: 22px;
+        flex-shrink: 0;
+        order: 1;
     }
 
-    /* Subject tag full width */
+    .sitting .sitting-type {
+        order: 2;
+        font-size: 0.6rem;
+        padding: 3px 8px;
+    }
+
+    .sitting .sitting-time {
+        order: 3;
+        font-size: 0.72rem;
+        margin-left: auto;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    /* Row 2: Paper name takes full width */
+    .sitting .paper-name {
+        order: 4;
+        flex-basis: 100%;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: normal;
+        overflow: visible;
+        padding: 4px 0 2px 30px; /* indent past checkbox */
+    }
+
+    /* Row 3: Mark input full width */
+    .sitting .mark-wrapper {
+        order: 5;
+        flex-basis: 100%;
+        padding-left: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sitting .mark-wrapper label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .mark-input {
+        width: 72px;
+        font-size: 0.9rem;
+        padding: 8px 10px;
+        border-radius: 6px;
+    }
+
+    /* Subject tag in header */
     .subject-tag {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+
+    /* Break row */
+    .break-row {
+        font-size: 0.7rem;
+        padding: 8px;
     }
 
     /* Timer panel compact */
@@ -227,7 +283,7 @@ body {
     :root { font-size: 13px; }
 
     main {
-        padding: 0.75rem;
+        padding: 0.5rem;
         padding-top: 56px;
     }
 
@@ -236,13 +292,29 @@ body {
     }
 
     .day-card {
-        padding: 0.75rem;
+        padding: 0.5rem;
         border-radius: 8px;
     }
 
+    .day-header {
+        padding-bottom: 0.375rem;
+    }
+
     .sitting {
-        padding: 0.625rem;
-        font-size: 0.8rem;
+        padding: 10px;
+        gap: 6px;
+        font-size: 0.78rem;
+    }
+
+    .sitting .paper-name {
+        font-size: 0.82rem;
+        padding-left: 30px;
+    }
+
+    .mark-input {
+        width: 64px;
+        font-size: 0.82rem;
+        padding: 6px 8px;
     }
 
     .modal-content {
@@ -419,6 +491,24 @@ main > * {
 .sitting:hover {
     transform: translateX(4px);
     background: #f0f3f8;
+}
+
+.sitting-time {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.mark-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mark-wrapper label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
 }
 
 .break-row {
