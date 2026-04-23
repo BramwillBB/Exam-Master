@@ -1,13 +1,19 @@
 :root {
     --primary: #4b7bec;
-    --secondary: #e67e22;
-    --success: #2ecc71;
-    --danger: #e74c3c;
-    --bg-main: #f0f3f8;
-    --bg-card: #ffffff;
-    --text-main: #2c3e50;
-    --text-muted: #95a5a6;
-    --glass: #e8ecf1;
+    --primary-light: #778beb;
+    --secondary: #fa8231;
+    --secondary-light: #fed330;
+    --success: #20bf6b;
+    --danger: #eb3b5a;
+    --bg-main: #f4f7f6;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --glass: rgba(223, 230, 233, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 15px 30px rgba(75, 123, 236, 0.15);
     --font: 'Inter', -apple-system, sans-serif;
 }
 
@@ -15,10 +21,10 @@
 
 body {
     font-family: var(--font);
-    background: var(--bg-main);
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
     color: var(--text-main);
     min-height: 100vh;
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -28,58 +34,79 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--glass);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .dash-header h1 {
-    font-size: 1.6rem;
-    color: var(--primary);
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
+    font-weight: 800;
 }
 
 .dash-header p {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    margin-top: 2px;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
 .back-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: var(--primary);
-    color: #fff;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #fff;
+    color: var(--primary);
     text-decoration: none;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
     font-weight: 700;
-    transition: opacity 0.2s;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.back-btn:hover { opacity: 0.85; }
+.back-btn:hover { 
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: var(--primary);
+    color: #fff;
+}
 
 /* ── Cards / Sections ── */
 .dash-section {
     background: var(--bg-card);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    animation: fadeUp 0.4s ease both;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dash-section:hover {
+    box-shadow: var(--shadow-hover);
 }
 
 .dash-section h2 {
-    font-size: 1.05rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--glass);
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-weight: 700;
 }
 
 @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -87,27 +114,37 @@ body {
 .hero-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .hero-card {
     background: var(--bg-card);
-    border-radius: 12px;
-    padding: 1.25rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
     text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    animation: fadeUp 0.4s ease both;
+    box-shadow: var(--shadow-md);
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
 }
 
 .hero-card canvas { display: block; }
 
 .hero-big {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: var(--primary);
     line-height: 1;
@@ -118,87 +155,102 @@ body {
 .hero-big.bad  { color: var(--danger); }
 
 .hero-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .hero-value {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: var(--primary);
 }
 
 /* ── Section 2: Performance Table ── */
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto; border-radius: 8px; }
 
 #perf-table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
 }
 
 #perf-table th {
     text-align: left;
-    padding: 10px 12px;
-    background: var(--bg-main);
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.02);
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     color: var(--text-muted);
-    border-bottom: 2px solid var(--glass);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 #perf-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--glass);
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
     vertical-align: middle;
+    transition: background 0.2s;
 }
 
-#perf-table tbody tr:hover {
-    background: rgba(75, 123, 236, 0.03);
+#perf-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
-.trend-up { color: var(--success); font-weight: 800; }
-.trend-down { color: var(--danger); font-weight: 800; }
-.trend-flat { color: var(--text-muted); font-weight: 800; }
+#perf-table tbody tr:hover td {
+    background: rgba(75, 123, 236, 0.04);
+}
+
+.trend-up { color: var(--success); font-weight: 800; font-size: 1.1rem; }
+.trend-down { color: var(--danger); font-weight: 800; font-size: 1.1rem; }
+.trend-flat { color: var(--text-muted); font-weight: 800; font-size: 1.1rem; }
 .mark-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 6px;
     font-weight: 700;
     font-size: 0.75rem;
 }
-.mark-good { background: rgba(46,204,113,0.12); color: var(--success); }
-.mark-mid  { background: rgba(230,126,34,0.12); color: var(--secondary); }
-.mark-bad  { background: rgba(231,76,60,0.12); color: var(--danger); }
+.mark-good { background: rgba(32,191,107,0.15); color: var(--success); }
+.mark-mid  { background: rgba(250,130,49,0.15); color: var(--secondary); }
+.mark-bad  { background: rgba(235,59,90,0.15); color: var(--danger); }
 .mark-none { color: var(--text-muted); }
 
 /* ── Section 3: Mark Distribution Charts ── */
 .chart-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .chart-card {
-    background: var(--bg-main);
-    border-radius: 8px;
-    padding: 1rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
 }
 
 .chart-card h3 {
-    font-size: 0.8rem;
-    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
     color: var(--text-main);
+    font-weight: 700;
 }
 
 .chart-card canvas {
     width: 100%;
-    height: 160px;
+    height: 180px;
     display: block;
 }
 
@@ -206,96 +258,116 @@ body {
 .split-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
 .streak-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .streak-card {
     text-align: center;
-    padding: 1rem;
-    background: var(--bg-main);
-    border-radius: 8px;
+    padding: 1.25rem 1rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.streak-card:hover {
+    transform: translateY(-2px);
 }
 
 .streak-big {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--secondary);
     line-height: 1.2;
 }
 
 .streak-label {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     font-weight: 700;
     text-transform: uppercase;
-    margin-top: 4px;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
 }
 
 /* Heatmap */
 .heatmap-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 6px;
 }
 
 .heatmap-cell {
     aspect-ratio: 1;
-    border-radius: 3px;
+    border-radius: 4px;
     background: var(--glass);
     position: relative;
-    cursor: default;
-    transition: transform 0.15s;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.heatmap-cell:hover { transform: scale(1.2); }
+.heatmap-cell:hover { 
+    transform: scale(1.3);
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 .heatmap-cell[title]::after { content: attr(title); }
-.heat-0 { background: var(--glass); }
-.heat-1 { background: rgba(46,204,113,0.3); }
-.heat-2 { background: rgba(46,204,113,0.6); }
-.heat-3 { background: rgba(46,204,113,1); }
+.heat-0 { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+.heat-1 { background: rgba(32,191,107,0.3); }
+.heat-2 { background: rgba(32,191,107,0.6); }
+.heat-3 { background: rgba(32,191,107,1); box-shadow: 0 0 8px rgba(32,191,107,0.4); }
 
 .heatmap-label {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
+    margin-bottom: 4px;
 }
 
 /* ── Section 5: Readiness Gauges ── */
 .readiness-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .gauge-card {
     text-align: center;
-    padding: 0.75rem;
-    background: var(--bg-main);
-    border-radius: 8px;
+    padding: 1.25rem 1rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.gauge-card:hover {
+    transform: translateY(-2px);
 }
 
 .gauge-card canvas {
     display: block;
-    margin: 0 auto 6px;
+    margin: 0 auto 10px;
 }
 
 .gauge-label {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--text-muted);
+    letter-spacing: 0.5px;
 }
 
 .gauge-score {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 800;
 }
 
@@ -303,29 +375,36 @@ body {
 .pomo-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .pomo-card {
     text-align: center;
-    padding: 1.25rem;
-    background: var(--bg-main);
-    border-radius: 8px;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.pomo-card:hover {
+    transform: translateY(-2px);
 }
 
 .pomo-big {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: var(--primary);
     line-height: 1.2;
 }
 
 .pomo-label {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    margin-top: 4px;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
 }
 
 /* ── Responsive ── */
