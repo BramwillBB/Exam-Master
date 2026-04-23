@@ -21,8 +21,9 @@ const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
 const SUPABASE_URL = "https://hxzevmvijojcfhmgewku.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4emV2bXZpam9qY2ZobWdld2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcxOTIsImV4cCI6MjA5MTEzMzE5Mn0.xg6C6LoXJMXWZ9CFLk1fOxjqUchWJ2uh4UPhjiW6O38";
 const AUTO_SYNC_ID = 'exam-master-shared-2026';
-let realtimeChannel = null;
+const OLD_SYNC_ID_KEY = 'exam_master_sync_id'; // Legacy key for migration
 let isSyncingFromRemote = false;
+let lastCloudTimestamp = null; // Track last known cloud update time
 
 // ─── Marks Store (persisted to localStorage) ────────────
 const MARKS_KEY = 'exam_master_marks';
@@ -44,25 +45,40 @@ function saveChecks(c) {
     pushToCloud();
 }
 
-// ─── Automatic Cloud Sync (REST API + Realtime) ─────────
+// ─── Cloud Sync (Reliable REST API + Polling) ───────────
 function supaFetch(path, options = {}) {
     const headers = {
         'apikey': SUPABASE_KEY,
         'Authorization': 'Bearer ' + SUPABASE_KEY,
         'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
         ...options.headers
     };
+    // Remove Content-Type for GET requests
+    if (options.method === 'GET') delete headers['Content-Type'];
     return fetch(SUPABASE_URL + '/rest/v1/' + path, { ...options, headers })
-        .catch(err => { console.warn('Cloud sync unavailable:', err); return null; });
+        .catch(err => { console.warn('[Sync] Cloud unavailable:', err.message); return null; });
 }
 
-// Push current local state to Supabase and broadcast to all other clients
+// Check if local data has any real content
+function hasLocalData() {
+    const marks = loadMarks();
+    const checks = loadChecks();
+    return Object.keys(marks).length > 0 || Object.keys(checks).length > 0;
+}
+
+// Push current local state to Supabase
 async function pushToCloud() {
-    if (isSyncingFromRemote) return; // Prevent echo loops
+    if (isSyncingFromRemote) return;
 
     const marks = loadMarks();
     const checks = loadChecks();
+
+    // Safety: don't overwrite cloud data with empty local data
+    if (Object.keys(marks).length === 0 && Object.keys(checks).length === 0) {
+        console.log('[Sync] Skipping push — local data is empty');
+        return;
+    }
+
     const payload = { 
         sync_id: AUTO_SYNC_ID, 
         marks: marks, 
@@ -70,163 +86,175 @@ async function pushToCloud() {
         updated_at: new Date().toISOString() 
     };
 
-    // 1. Save to database
+    console.log('[Sync] Pushing to cloud...', Object.keys(marks).length, 'marks,', Object.keys(checks).length, 'checks');
+
     const resp = await supaFetch('study_sync', {
         method: 'POST',
         headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
         body: JSON.stringify(payload)
     });
 
-    if (resp && !resp.ok) {
+    if (!resp) {
+        console.warn('[Sync] Push failed — no response');
+    } else if (!resp.ok) {
         const text = await resp.text();
-        console.warn('Cloud save issue:', text);
-    }
-
-    // 2. Broadcast change to all connected clients via Realtime channel
-    if (realtimeChannel) {
-        try {
-            realtimeChannel.send({
-                type: 'broadcast',
-                event: 'sync_update',
-                payload: { marks, checks }
-            });
-        } catch (e) {
-            console.warn('Broadcast failed:', e);
-        }
+        console.warn('[Sync] Push error:', resp.status, text);
+    } else {
+        lastCloudTimestamp = payload.updated_at;
+        console.log('[Sync] Push successful');
     }
 }
 
-// Pull latest state from Supabase on load
-async function pullFromCloud() {
-    const resp = await supaFetch('study_sync?sync_id=eq.' + encodeURIComponent(AUTO_SYNC_ID) + '&select=*', {
+// Pull latest state from Supabase
+async function pullFromCloud(syncId) {
+    const id = syncId || AUTO_SYNC_ID;
+    const resp = await supaFetch('study_sync?sync_id=eq.' + encodeURIComponent(id) + '&select=*', {
         method: 'GET',
         headers: { 'Accept': 'application/json' }
     });
 
-    if (!resp || !resp.ok) return false;
+    if (!resp) { console.warn('[Sync] Pull failed — no response'); return null; }
+    if (!resp.ok) { console.warn('[Sync] Pull error:', resp.status); return null; }
 
     const rows = await resp.json();
-    if (!rows || rows.length === 0) return false;
+    if (!rows || rows.length === 0) {
+        console.log('[Sync] No cloud data found for key:', id);
+        return null;
+    }
 
     const data = rows[0];
-    if (data.marks) localStorage.setItem(MARKS_KEY, JSON.stringify(data.marks));
-    if (data.checks) localStorage.setItem(CHECKS_KEY, JSON.stringify(data.checks));
-    
-    return true;
+    console.log('[Sync] Pulled cloud data — updated_at:', data.updated_at,
+        '| marks:', data.marks ? Object.keys(data.marks).length : 0,
+        '| checks:', data.checks ? Object.keys(data.checks).length : 0);
+    return data;
 }
 
-// Apply incoming remote data and refresh the UI
-function applyRemoteData(payload) {
-    isSyncingFromRemote = true;
-    
-    if (payload.marks) localStorage.setItem(MARKS_KEY, JSON.stringify(payload.marks));
-    if (payload.checks) localStorage.setItem(CHECKS_KEY, JSON.stringify(payload.checks));
+// Apply cloud data to localStorage and refresh UI
+function applyCloudData(data) {
+    if (!data) return;
 
-    // Determine active filter
+    isSyncingFromRemote = true;
+
+    if (data.marks && Object.keys(data.marks).length > 0) {
+        localStorage.setItem(MARKS_KEY, JSON.stringify(data.marks));
+    }
+    if (data.checks && Object.keys(data.checks).length > 0) {
+        localStorage.setItem(CHECKS_KEY, JSON.stringify(data.checks));
+    }
+    if (data.updated_at) {
+        lastCloudTimestamp = data.updated_at;
+    }
+
+    // Refresh UI preserving current filter
     const activeNav = document.querySelector('.nav-item.active');
     const filterSubject = activeNav && activeNav.dataset.subject !== 'all' ? activeNav.dataset.subject : null;
-
     generateSchedule(filterSubject);
     updateAverages();
     updateSessionCount();
 
     isSyncingFromRemote = false;
+    console.log('[Sync] UI refreshed from cloud data');
 }
 
-// Connect to Supabase Realtime to listen for changes from other devices
-function connectRealtime() {
-    const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
-    const ws = new WebSocket(wsUrl);
-    const channelTopic = 'realtime:exam-master-live';
+// Periodic sync: pull from cloud and update if newer
+async function periodicSync() {
+    const data = await pullFromCloud();
+    if (!data) return;
 
-    ws.onopen = () => {
-        console.log('Realtime: connected');
-        // Join the channel
-        ws.send(JSON.stringify({
-            topic: channelTopic,
-            event: 'phx_join',
-            payload: { config: { broadcast: { self: false } } },
-            ref: '1'
-        }));
+    // Only apply if cloud data is newer than our last known timestamp
+    if (!lastCloudTimestamp || data.updated_at > lastCloudTimestamp) {
+        console.log('[Sync] Newer data detected, applying...');
+        applyCloudData(data);
+    }
+}
 
-        // Keep alive with heartbeat every 30s
-        setInterval(() => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    topic: 'phoenix',
-                    event: 'heartbeat',
-                    payload: {},
-                    ref: Date.now().toString()
-                }));
-            }
-        }, 30000);
-    };
+// Migrate data from old sync key to new shared key
+async function migrateOldSyncKey() {
+    const oldSyncId = localStorage.getItem(OLD_SYNC_ID_KEY);
+    if (!oldSyncId) return false;
 
-    ws.onmessage = (event) => {
-        try {
-            const msg = JSON.parse(event.data);
-            if (msg.event === 'broadcast' && msg.payload && msg.payload.event === 'sync_update') {
-                console.log('Realtime: received remote update');
-                applyRemoteData(msg.payload.payload);
-            }
-        } catch (e) {
-            // Ignore non-JSON or system messages
-        }
-    };
+    console.log('[Sync] Found old sync key:', oldSyncId, '— attempting migration...');
 
-    ws.onclose = () => {
-        console.log('Realtime: disconnected, reconnecting in 3s...');
-        setTimeout(connectRealtime, 3000);
-    };
+    // Pull data from the old key
+    const oldData = await pullFromCloud(oldSyncId);
+    if (oldData && (oldData.marks || oldData.checks)) {
+        // Apply old data to local storage
+        if (oldData.marks) localStorage.setItem(MARKS_KEY, JSON.stringify(oldData.marks));
+        if (oldData.checks) localStorage.setItem(CHECKS_KEY, JSON.stringify(oldData.checks));
 
-    ws.onerror = (err) => {
-        console.warn('Realtime error:', err);
-    };
+        // Push under new shared key
+        await pushToCloud();
+        console.log('[Sync] Migration complete — old data pushed under new key');
+    }
 
-    // Expose send capability for broadcasts
-    realtimeChannel = {
-        send: (message) => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    topic: channelTopic,
-                    event: 'broadcast',
-                    payload: message.payload ? message : { event: message.event, payload: message.payload || message },
-                    ref: Date.now().toString()
-                }));
-            }
-        }
-    };
+    // Remove old key so migration only runs once
+    localStorage.removeItem(OLD_SYNC_ID_KEY);
+    return true;
 }
 
 // Auto-sync initialisation (called once on DOMContentLoaded)
 async function initAutoSync() {
-    // 1. Pull latest cloud data
-    const pulled = await pullFromCloud();
-    if (pulled) {
-        generateSchedule();
+    console.log('[Sync] Initialising automatic sync...');
+
+    // 1. Migrate old sync key data if present
+    const migrated = await migrateOldSyncKey();
+
+    // 2. Try to pull latest cloud data
+    const cloudData = await pullFromCloud();
+
+    if (cloudData) {
+        // Cloud has data — merge intelligently
+        const localMarks = loadMarks();
+        const localChecks = loadChecks();
+        const cloudMarks = cloudData.marks || {};
+        const cloudChecks = cloudData.checks || {};
+
+        // Merge: cloud data takes precedence, but keep any local-only entries
+        const mergedMarks = { ...localMarks, ...cloudMarks };
+        const mergedChecks = { ...localChecks, ...cloudChecks };
+
+        localStorage.setItem(MARKS_KEY, JSON.stringify(mergedMarks));
+        localStorage.setItem(CHECKS_KEY, JSON.stringify(mergedChecks));
+        lastCloudTimestamp = cloudData.updated_at;
+
+        // Refresh UI with merged data
+        const activeNav = document.querySelector('.nav-item.active');
+        const filterSubject = activeNav && activeNav.dataset.subject !== 'all' ? activeNav.dataset.subject : null;
+        generateSchedule(filterSubject);
         updateAverages();
         updateSessionCount();
-    } else {
-        // First time — push local data up
+
+        // Push merged data back so cloud has everything
+        isSyncingFromRemote = false;
         await pushToCloud();
+
+        console.log('[Sync] Loaded and merged cloud data');
+    } else if (hasLocalData()) {
+        // No cloud data but we have local data — push it up
+        console.log('[Sync] No cloud data found — pushing local data');
+        await pushToCloud();
+    } else {
+        console.log('[Sync] No data anywhere — fresh start');
     }
 
-    // 2. Connect Realtime for live updates
-    connectRealtime();
+    // 3. Start periodic polling every 10 seconds
+    setInterval(periodicSync, 10000);
 
-    // 3. Periodic poll as fallback (every 30 seconds)
-    setInterval(async () => {
-        const refreshed = await pullFromCloud();
-        if (refreshed) {
-            isSyncingFromRemote = true;
-            const activeNav = document.querySelector('.nav-item.active');
-            const filterSubject = activeNav && activeNav.dataset.subject !== 'all' ? activeNav.dataset.subject : null;
-            generateSchedule(filterSubject);
-            updateAverages();
-            updateSessionCount();
-            isSyncingFromRemote = false;
+    // 4. Sync when page becomes visible (user switches back to tab)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log('[Sync] Page visible — checking for updates...');
+            periodicSync();
         }
-    }, 30000);
+    });
+
+    // 5. Sync when window gains focus (user clicks on window)
+    window.addEventListener('focus', () => {
+        console.log('[Sync] Window focused — checking for updates...');
+        periodicSync();
+    });
+
+    console.log('[Sync] Auto-sync ready ✓ (polling every 10s)');
 }
 
 // ─── Schedule Generation ────────────────────────────────
