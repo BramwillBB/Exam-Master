@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Master – Analytics Dashboard</title>
+    <meta name="description" content="Performance analytics and insights for Grade 12 NSC 2026 exam preparation.">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="dash-header">
+        <div>
+            <h1>📊 ANALYTICS</h1>
+            <p>Exam Master • Performance Insights</p>
+        </div>
+        <a href="index.html" class="back-btn">← Back to Study Plan</a>
+    </header>
+
+    <!-- Section 1: Hero Stats -->
+    <section class="hero-strip" aria-label="Key statistics">
+        <div class="hero-card">
+            <canvas id="progress-ring" width="100" height="100"></canvas>
+            <div class="hero-label">Completion</div>
+            <div class="hero-value" id="hero-completion">0%</div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-big warn" id="hero-days">--</div>
+            <div class="hero-label">Days Remaining</div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-big" id="hero-pace">--</div>
+            <div class="hero-label">Sessions / Day Needed</div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-big" id="hero-exam-avg">–</div>
+            <div class="hero-label">Overall Exam Average</div>
+        </div>
+    </section>
+
+    <!-- Section 2: Subject Performance Table -->
+    <section class="dash-section" aria-label="Subject performance">
+        <h2>📈 Subject Performance</h2>
+        <div class="table-wrap">
+            <table id="perf-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Papers Done</th>
+                        <th>Guided Avg</th>
+                        <th>Exam Avg</th>
+                        <th>Trend</th>
+                        <th>Weakest Paper</th>
+                    </tr>
+                </thead>
+                <tbody id="perf-tbody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Section 3: Mark Distribution -->
+    <section class="dash-section" aria-label="Mark distribution charts">
+        <h2>📊 Mark Distribution</h2>
+        <div class="chart-grid" id="mark-charts"></div>
+    </section>
+
+    <!-- Section 4 & 5: Streak + Readiness -->
+    <div class="split-section">
+        <section class="dash-section" aria-label="Study streak">
+            <h2>🔥 Study Streak & Consistency</h2>
+            <div class="streak-stats">
+                <div class="streak-card">
+                    <div class="streak-big" id="current-streak">0</div>
+                    <div class="streak-label">Current Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-big" id="longest-streak">0</div>
+                    <div class="streak-label">Longest Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-big" id="total-study-days">0</div>
+                    <div class="streak-label">Total Study Days</div>
+                </div>
+            </div>
+            <div id="heatmap" class="heatmap-grid"></div>
+        </section>
+
+        <section class="dash-section" aria-label="Readiness scores">
+            <h2>🎯 Readiness Score</h2>
+            <div class="readiness-grid" id="readiness-grid"></div>
+        </section>
+    </div>
+
+    <!-- Section 6: Pomodoro Stats -->
+    <section class="dash-section" aria-label="Pomodoro statistics">
+        <h2>⏱ Pomodoro Stats</h2>
+        <div class="pomo-stats">
+            <div class="pomo-card">
+                <div class="pomo-big" id="pomo-total-hours">0h</div>
+                <div class="pomo-label">Total Focus Time</div>
+            </div>
+            <div class="pomo-card">
+                <div class="pomo-big" id="pomo-sessions">0</div>
+                <div class="pomo-label">Sessions Completed</div>
+            </div>
+            <div class="pomo-card">
+                <div class="pomo-big" id="pomo-daily-avg">0h</div>
+                <div class="pomo-label">Daily Average</div>
+            </div>
+        </div>
+    </section>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

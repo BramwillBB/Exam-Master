@@ -584,6 +584,17 @@ function toggleTimer() {
                 document.getElementById('timer-start-btn').className = 'timer-btn btn-start';
                 
                 showTimerModal();
+
+                // Log completed pomodoro for analytics
+                try {
+                    const pomoLog = JSON.parse(localStorage.getItem('exam_master_pomodoro_log') || '[]');
+                    pomoLog.push({
+                        date: new Date().toISOString().split('T')[0],
+                        mode: currentMode,
+                        minutes: TIMER_MODES[currentMode].minutes
+                    });
+                    localStorage.setItem('exam_master_pomodoro_log', JSON.stringify(pomoLog));
+                } catch(e) {}
                 
                 try { new Audio('data:audio/wav;base64,UklGRhwFAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YfgEAACAf3+AgICAgICAgH+AgICBgIGCgoOEhYaIiouNjpGSlZaZm52goqutr7G0t7q7vsHDxsfJy83P0NLU1tfZ2tvd3t/h4uPk5ebn5+jo6enq6uvr6+zs7O3t7e3t7u7u7u7u7u7u7u7u7u3t7Ozr6+rq6ejn5uXk4+Lh39/d3NrZ19XU0tHPzszLycfFw8G+vLq4trSwrqyqqKWjoJ6cmpmXlZSTkpGQj46Njo2NjIyMjIyNjY6Oj5CRkpOUlZaYmZucnZ6goaOkpaeoqautr7CytLW3uLq8vb/Aw8TGyMnLzM3P0NLT1NXW2Nna29ze3uDh4uPk5ebn6Onp6uvs7O3t7u7u7+/w8PDw8fHx8fHx8fHx8fHx8PDw7+/u7u7t7ezs6+vq6eno5+bm5eTj4uHg397d3NrZ2NbV1NPR0M/NzMvKyMfGxcTDwsHAwL++vr2m').play(); } catch(e){}
                 return;

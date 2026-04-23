@@ -1,0 +1,353 @@
+:root {
+    --primary: #4b7bec;
+    --secondary: #e67e22;
+    --success: #2ecc71;
+    --danger: #e74c3c;
+    --bg-main: #f0f3f8;
+    --bg-card: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #95a5a6;
+    --glass: #e8ecf1;
+    --font: 'Inter', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font);
+    background: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ── Header ── */
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--glass);
+}
+
+.dash-header h1 {
+    font-size: 1.6rem;
+    color: var(--primary);
+    letter-spacing: 1px;
+}
+
+.dash-header p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: opacity 0.2s;
+}
+
+.back-btn:hover { opacity: 0.85; }
+
+/* ── Cards / Sections ── */
+.dash-section {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    animation: fadeUp 0.4s ease both;
+}
+
+.dash-section h2 {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--glass);
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section 1: Hero Strip ── */
+.hero-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    animation: fadeUp 0.4s ease both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero-card canvas { display: block; }
+
+.hero-big {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.hero-big.warn { color: var(--secondary); }
+.hero-big.good { color: var(--success); }
+.hero-big.bad  { color: var(--danger); }
+
+.hero-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+/* ── Section 2: Performance Table ── */
+.table-wrap { overflow-x: auto; }
+
+#perf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+#perf-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg-main);
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--glass);
+}
+
+#perf-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--glass);
+    vertical-align: middle;
+}
+
+#perf-table tbody tr:hover {
+    background: rgba(75, 123, 236, 0.03);
+}
+
+.trend-up { color: var(--success); font-weight: 800; }
+.trend-down { color: var(--danger); font-weight: 800; }
+.trend-flat { color: var(--text-muted); font-weight: 800; }
+.mark-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+.mark-good { background: rgba(46,204,113,0.12); color: var(--success); }
+.mark-mid  { background: rgba(230,126,34,0.12); color: var(--secondary); }
+.mark-bad  { background: rgba(231,76,60,0.12); color: var(--danger); }
+.mark-none { color: var(--text-muted); }
+
+/* ── Section 3: Mark Distribution Charts ── */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.chart-card {
+    background: var(--bg-main);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.chart-card h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-main);
+}
+
+.chart-card canvas {
+    width: 100%;
+    height: 160px;
+    display: block;
+}
+
+/* ── Section 4 & 5: Split ── */
+.split-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.streak-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.streak-card {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+}
+
+.streak-big {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--secondary);
+    line-height: 1.2;
+}
+
+.streak-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* Heatmap */
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: var(--glass);
+    position: relative;
+    cursor: default;
+    transition: transform 0.15s;
+}
+
+.heatmap-cell:hover { transform: scale(1.2); }
+.heatmap-cell[title]::after { content: attr(title); }
+.heat-0 { background: var(--glass); }
+.heat-1 { background: rgba(46,204,113,0.3); }
+.heat-2 { background: rgba(46,204,113,0.6); }
+.heat-3 { background: rgba(46,204,113,1); }
+
+.heatmap-label {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ── Section 5: Readiness Gauges ── */
+.readiness-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.gauge-card {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+}
+
+.gauge-card canvas {
+    display: block;
+    margin: 0 auto 6px;
+}
+
+.gauge-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.gauge-score {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+/* ── Section 6: Pomodoro Stats ── */
+.pomo-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.pomo-card {
+    text-align: center;
+    padding: 1.25rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+}
+
+.pomo-big {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1.2;
+}
+
+.pomo-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    body { padding: 1rem; }
+    .hero-strip { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+    .split-section { grid-template-columns: 1fr; }
+    .readiness-grid { grid-template-columns: repeat(2, 1fr); }
+    .dash-header { flex-direction: column; gap: 1rem; text-align: center; }
+}
+
+@media (max-width: 480px) {
+    .hero-strip { grid-template-columns: 1fr; }
+    .streak-stats { grid-template-columns: 1fr; }
+    .pomo-stats { grid-template-columns: 1fr; }
+    .readiness-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
