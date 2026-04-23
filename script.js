@@ -423,52 +423,91 @@ function updateSessionCount() {
 
 function updateAverages() {
     const marks = loadMarks();
-    let totalSum = 0, totalCount = 0;
+    let examTotalSum = 0, examTotalCount = 0;
+    let guidedTotalSum = 0, guidedTotalCount = 0;
 
     Object.keys(subjectsData).forEach(subj => {
         const subjKey = subj.replace(/\s+/g, '_');
-        const subjMarks = [];
+
+        // Collect Exam Condition marks
+        const examMarks = [];
+        // Collect Guided marks
+        const guidedMarks = [];
 
         Object.keys(marks).forEach(key => {
-            if (
-                (key.startsWith(`mark_sched_e_${subjKey}_`) ||
-                 key.startsWith(`mark_sched_e2_${subjKey}_`) ||
-                 key.startsWith(`mark_sched_g_${subjKey}_`)) &&
-                marks[key] !== undefined
-            ) {
-                subjMarks.push(Number(marks[key]));
+            if (marks[key] === undefined) return;
+
+            if (key.startsWith(`mark_sched_e_${subjKey}_`) ||
+                key.startsWith(`mark_sched_e2_${subjKey}_`)) {
+                examMarks.push(Number(marks[key]));
+            } else if (key.startsWith(`mark_sched_g_${subjKey}_`)) {
+                guidedMarks.push(Number(marks[key]));
             }
         });
 
-        const avg = subjMarks.length > 0
-            ? Math.round(subjMarks.reduce((a, b) => a + b, 0) / subjMarks.length)
+        // ── Exam Condition averages ──
+        const examAvg = examMarks.length > 0
+            ? Math.round(examMarks.reduce((a, b) => a + b, 0) / examMarks.length)
             : null;
 
-        if (avg !== null) {
-            totalSum += subjMarks.reduce((a, b) => a + b, 0);
-            totalCount += subjMarks.length;
+        if (examAvg !== null) {
+            examTotalSum += examMarks.reduce((a, b) => a + b, 0);
+            examTotalCount += examMarks.length;
         }
 
-        const bar   = avg || 0;
-        const color = bar >= 70 ? 'var(--success)' : bar >= 50 ? 'var(--secondary)' : bar > 0 ? 'var(--danger)' : 'var(--glass)';
+        const examBar = examAvg || 0;
+        const examColor = examBar >= 70 ? 'var(--success)' : examBar >= 50 ? 'var(--secondary)' : examBar > 0 ? 'var(--danger)' : 'var(--glass)';
 
-        const sidebarVal = document.getElementById(`sidebar-avg-${subjKey}`);
-        const sidebarBar = document.getElementById(`sidebar-bar-${subjKey}`);
-        if (sidebarVal) {
-            sidebarVal.textContent = avg !== null ? avg + '%' : '–';
-            sidebarVal.style.color = avg !== null ? color : 'var(--text-muted)';
+        const examVal = document.getElementById(`sidebar-exam-avg-${subjKey}`);
+        const examBarEl = document.getElementById(`sidebar-exam-bar-${subjKey}`);
+        if (examVal) {
+            examVal.textContent = examAvg !== null ? examAvg + '%' : '–';
+            examVal.style.color = examAvg !== null ? examColor : 'var(--text-muted)';
         }
-        if (sidebarBar) {
-            sidebarBar.style.width = bar + '%';
-            sidebarBar.style.background = color;
+        if (examBarEl) {
+            examBarEl.style.width = examBar + '%';
+            examBarEl.style.background = examColor;
+        }
+
+        // ── Guided averages ──
+        const guidedAvg = guidedMarks.length > 0
+            ? Math.round(guidedMarks.reduce((a, b) => a + b, 0) / guidedMarks.length)
+            : null;
+
+        if (guidedAvg !== null) {
+            guidedTotalSum += guidedMarks.reduce((a, b) => a + b, 0);
+            guidedTotalCount += guidedMarks.length;
+        }
+
+        const guidedBar = guidedAvg || 0;
+        const guidedColor = guidedBar >= 70 ? 'var(--success)' : guidedBar >= 50 ? 'var(--secondary)' : guidedBar > 0 ? 'var(--danger)' : 'var(--glass)';
+
+        const guidedVal = document.getElementById(`sidebar-guided-avg-${subjKey}`);
+        const guidedBarEl = document.getElementById(`sidebar-guided-bar-${subjKey}`);
+        if (guidedVal) {
+            guidedVal.textContent = guidedAvg !== null ? guidedAvg + '%' : '–';
+            guidedVal.style.color = guidedAvg !== null ? guidedColor : 'var(--text-muted)';
+        }
+        if (guidedBarEl) {
+            guidedBarEl.style.width = guidedBar + '%';
+            guidedBarEl.style.background = guidedColor;
         }
     });
 
-    const overallAvg = totalCount > 0 ? Math.round(totalSum / totalCount) : null;
-    const overallEl  = document.getElementById('sidebar-overall-avg');
-    if (overallEl) {
-        overallEl.textContent = overallAvg !== null ? overallAvg + '%' : '–';
-        overallEl.style.color = (overallAvg >= 70) ? 'var(--success)' : (overallAvg >= 50 ? 'var(--secondary)' : 'var(--danger)');
+    // ── Overall Exam average ──
+    const examOverallAvg = examTotalCount > 0 ? Math.round(examTotalSum / examTotalCount) : null;
+    const examOverallEl = document.getElementById('sidebar-exam-overall-avg');
+    if (examOverallEl) {
+        examOverallEl.textContent = examOverallAvg !== null ? examOverallAvg + '%' : '–';
+        examOverallEl.style.color = (examOverallAvg >= 70) ? 'var(--success)' : (examOverallAvg >= 50 ? 'var(--secondary)' : 'var(--danger)');
+    }
+
+    // ── Overall Guided average ──
+    const guidedOverallAvg = guidedTotalCount > 0 ? Math.round(guidedTotalSum / guidedTotalCount) : null;
+    const guidedOverallEl = document.getElementById('sidebar-guided-overall-avg');
+    if (guidedOverallEl) {
+        guidedOverallEl.textContent = guidedOverallAvg !== null ? guidedOverallAvg + '%' : '–';
+        guidedOverallEl.style.color = (guidedOverallAvg >= 70) ? 'var(--success)' : (guidedOverallAvg >= 50 ? 'var(--secondary)' : 'var(--danger)');
     }
 }
 

@@ -122,60 +122,117 @@
             </div>
         </section>
 
-        <!-- Exam Averages -->
+        <!-- Exam Condition Averages -->
         <section class="stats-sidebar" style="flex: 1; overflow-y: auto; padding: 0.5rem;">
-            <div class="timer-label" style="text-align: center; margin-bottom: 0.75rem;">📊 Subject Averages</div>
-            <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; text-align: center; border-bottom: 1px solid var(--glass); padding-bottom: 0.5rem;">
-                Overall Avg: <span id="sidebar-overall-avg" style="color: var(--secondary);">–</span>
+            <div class="timer-label" style="text-align: center; margin-bottom: 0.75rem;">📝 Exam Averages</div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--secondary); margin-bottom: 0.75rem; text-align: center; border-bottom: 1px solid var(--glass); padding-bottom: 0.5rem;">
+                Overall: <span id="sidebar-exam-overall-avg" style="color: var(--secondary);">–</span>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="subject-averages-list">
-                <!-- SUBJECT ROWS -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="exam-averages-list">
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>English HL</span><span id="sidebar-avg-English_HL">–</span>
+                        <span>English HL</span><span id="sidebar-exam-avg-English_HL">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-English_HL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-English_HL" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>Afrikaans FAL</span><span id="sidebar-avg-Afrikaans_FAL">–</span>
+                        <span>Afrikaans FAL</span><span id="sidebar-exam-avg-Afrikaans_FAL">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-Afrikaans_FAL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-Afrikaans_FAL" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>Mathematics</span><span id="sidebar-avg-Mathematics">–</span>
+                        <span>Mathematics</span><span id="sidebar-exam-avg-Mathematics">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-Mathematics" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-Mathematics" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>Business Studies</span><span id="sidebar-avg-Business_Studies">–</span>
+                        <span>Business Studies</span><span id="sidebar-exam-avg-Business_Studies">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-Business_Studies" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-Business_Studies" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>Physical Science</span><span id="sidebar-avg-Physical_Science">–</span>
+                        <span>Physical Science</span><span id="sidebar-exam-avg-Physical_Science">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-Physical_Science" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-Physical_Science" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
                     </div>
                 </div>
                 <div>
                     <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
-                        <span>Life Sciences</span><span id="sidebar-avg-Life_Sciences">–</span>
+                        <span>Life Sciences</span><span id="sidebar-exam-avg-Life_Sciences">–</span>
                     </div>
                     <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
-                        <div id="sidebar-bar-Life_Sciences" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        <div id="sidebar-exam-bar-Life_Sciences" style="height:100%;width:0%;background:var(--secondary);border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Averages -->
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid var(--glass);">
+                <div class="timer-label" style="text-align: center; margin-bottom: 0.75rem;">📘 Guided Averages</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; text-align: center; border-bottom: 1px solid var(--glass); padding-bottom: 0.5rem;">
+                    Overall: <span id="sidebar-guided-overall-avg" style="color: var(--primary);">–</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="guided-averages-list">
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>English HL</span><span id="sidebar-guided-avg-English_HL">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-English_HL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>Afrikaans FAL</span><span id="sidebar-guided-avg-Afrikaans_FAL">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-Afrikaans_FAL" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>Mathematics</span><span id="sidebar-guided-avg-Mathematics">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-Mathematics" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>Business Studies</span><span id="sidebar-guided-avg-Business_Studies">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-Business_Studies" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>Physical Science</span><span id="sidebar-guided-avg-Physical_Science">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-Physical_Science" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.65rem;font-weight:700;margin-bottom:3px;">
+                            <span>Life Sciences</span><span id="sidebar-guided-avg-Life_Sciences">–</span>
+                        </div>
+                        <div style="background:var(--glass);height:4px;border-radius:2px;overflow:hidden;">
+                            <div id="sidebar-guided-bar-Life_Sciences" style="height:100%;width:0%;background:var(--primary);border-radius:2px;transition:width 0.4s;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
