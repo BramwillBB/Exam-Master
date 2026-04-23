@@ -399,6 +399,14 @@ function toggleCheck(el) {
     const checks = loadChecks();
     checks[el.dataset.id] = el.checked;
     saveChecks(checks);
+
+    // Toggle visual done state on the sitting row
+    const row = el.closest('.sitting');
+    if (row) {
+        if (el.checked) row.classList.add('done');
+        else row.classList.remove('done');
+    }
+
     updateSessionCount();
 }
 
