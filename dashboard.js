@@ -339,7 +339,8 @@ function renderPerformanceTable() {
 
         const guidedStr = stats.guidedAvg !== null ? `<span class="mark-badge ${stats.guidedAvg >= 70 ? 'mark-good' : stats.guidedAvg >= 50 ? 'mark-mid' : 'mark-bad'}">${stats.guidedAvg}%</span>` : '<span class="mark-none">–</span>';
         const examStr = stats.examAvg !== null ? `<span class="mark-badge ${stats.examAvg >= 70 ? 'mark-good' : stats.examAvg >= 50 ? 'mark-mid' : 'mark-bad'}">${stats.examAvg}%</span>` : '<span class="mark-none">–</span>';
-        const weakStr = stats.weakest ? `${stats.weakest.paper} <span class="mark-badge mark-bad">${stats.weakest.mark}%</span>` : '<span class="mark-none">–</span>';
+        const weakPaperStr = stats.weakest ? stats.weakest.paper : '<span class="mark-none">–</span>';
+        const weakMarkStr = stats.weakest ? `<span class="mark-badge mark-bad">${stats.weakest.mark}%</span>` : '<span class="mark-none">–</span>';
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -348,7 +349,8 @@ function renderPerformanceTable() {
             <td>${guidedStr}</td>
             <td>${examStr}</td>
             <td><span class="${trendClass}">${trendIcon}</span></td>
-            <td>${weakStr}</td>`;
+            <td>${weakPaperStr}</td>
+            <td>${weakMarkStr}</td>`;
         tbody.appendChild(row);
     });
 }
