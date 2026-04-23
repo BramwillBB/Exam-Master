@@ -367,12 +367,12 @@ function sittingHTML(paper, type, time, checkId, checked) {
     const markKey = `mark_${checkId}`;
     const savedMark = marks[markKey] !== undefined ? marks[markKey] : '';
 
-    const markField = type === 'Exam Condition' ? `
+    const markField = `
         <div class="mark-wrapper">
             <label>Mark %</label>
             <input type="number" min="0" max="100" placeholder="–" class="mark-input"
                 data-mark="${markKey}" value="${savedMark}" oninput="saveMarkInline(this)">
-        </div>` : '<div class="mark-wrapper"></div>';
+        </div>`;
 
     return `
         <div class="sitting ${chk ? 'done' : ''}" style="border-left-color: ${border}">
@@ -432,7 +432,8 @@ function updateAverages() {
         Object.keys(marks).forEach(key => {
             if (
                 (key.startsWith(`mark_sched_e_${subjKey}_`) ||
-                 key.startsWith(`mark_sched_e2_${subjKey}_`)) &&
+                 key.startsWith(`mark_sched_e2_${subjKey}_`) ||
+                 key.startsWith(`mark_sched_g_${subjKey}_`)) &&
                 marks[key] !== undefined
             ) {
                 subjMarks.push(Number(marks[key]));
