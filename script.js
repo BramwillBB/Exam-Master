@@ -600,9 +600,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateExamCountdown();
     setInterval(updateExamCountdown, 1000);
 
-    // 2. STATS & DATA
+    // 2. STATS & DATA – dynamic days remaining
     const cd = document.getElementById('days-countdown');
-    if (cd) cd.textContent = totalDays;
+    if (cd) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const remaining = Math.max(0, Math.ceil((endDate - today) / (1000 * 60 * 60 * 24)));
+        cd.textContent = remaining;
+    }
     
     // 3. GENERATE SCHEDULE IMMEDIATELY (always works, uses localStorage)
     try {
