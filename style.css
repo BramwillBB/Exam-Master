@@ -1,19 +1,21 @@
 :root {
     --primary: #4b7bec;
+    --primary-light: #778beb;
     --primary-dark: #3867d6;
-    --secondary: #e67e22;
-    --secondary-light: #f5a623;
-    --bg-main: #f5f7fa;
-    --bg-card: #ffffff;
+    --secondary: #fa8231;
+    --secondary-light: #fed330;
+    --success: #20bf6b;
+    --danger: #eb3b5a;
+    --bg-main: #f4f7f6;
+    --bg-card: rgba(255, 255, 255, 0.85);
     --text-main: #2d3436;
     --text-muted: #636e72;
-    --accent: #4b7bec;
-    --warning: #e67e22;
-    --success: #27ae60;
-    --danger: #e74c3c;
-    --radius: 10px;
-    --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    --glass: rgba(0, 0, 0, 0.06);
+    --glass: rgba(223, 230, 233, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 15px 30px rgba(75, 123, 236, 0.15);
+    --radius: 12px;
 }
 
 * {
@@ -24,7 +26,7 @@
 }
 
 body {
-    background-color: var(--bg-main);
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
     color: var(--text-main);
     display: grid;
     grid-template-columns: 280px 1fr 310px; /* Increased nav width */
@@ -343,35 +345,41 @@ body {
 aside {
     height: 100vh;
     background: var(--bg-card);
-    border-right: 1px solid var(--glass);
-    padding: 1.25rem 1rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 1px solid var(--glass-border);
+    padding: 1.5rem 1rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-md);
     overflow-y: auto;
 }
 
 .stats-aside {
     height: 100vh;
     background: var(--bg-card);
-    border-left: 1px solid var(--glass);
-    padding: 1.25rem 1rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid var(--glass-border);
+    padding: 1.5rem 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.03);
+    box-shadow: -10px 0 20px rgba(0,0,0,0.03);
     overflow-y: auto;
 }
 
 .logo {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 800;
-    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
     text-align: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--glass);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
     margin-bottom: 0.5rem;
 }
 
@@ -404,12 +412,12 @@ aside {
 
 /* ── Main ── */
 main {
-    padding: 1.5rem 2rem;
+    padding: 2rem 2.5rem;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     height: 100vh;
-    background: #fcfdfe;
+    background: transparent;
 }
 
 main > * {
@@ -451,11 +459,18 @@ main > * {
 /* ── Day Cards ── */
 .day-card {
     background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius);
-    padding: 1.5rem;
-    border: 1px solid var(--glass);
-    box-shadow: var(--shadow);
-    margin-bottom: 0.5rem;
+    padding: 1.75rem;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 0.75rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.day-card:hover {
+    box-shadow: var(--shadow-hover);
 }
 
 .day-header {
@@ -482,15 +497,17 @@ main > * {
     padding: 1rem 1.75rem;
     margin-bottom: 0.5rem;
     border-radius: 8px;
-    background: var(--bg-main);
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--glass-border);
     font-size: 0.88rem;
     border-left: 4px solid var(--primary);
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .sitting:hover {
-    transform: translateX(4px);
-    background: #f0f3f8;
+    transform: translateX(4px) scale(1.01);
+    background: rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-sm);
 }
 
 .sitting-time {
@@ -581,11 +598,11 @@ main > * {
 
 /* ── Tracker Sidebar ── */
 .tracker-sidebar {
-    background: var(--bg-card);
+    background: rgba(255,255,255,0.5);
     padding: 1.25rem;
     border-radius: var(--radius);
-    border: 1px solid var(--glass);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--primary) transparent;
@@ -653,11 +670,18 @@ main > * {
 /* ── Progress Averages ── */
 .avg-section {
     background: var(--bg-card);
-    padding: 1.25rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1.5rem;
     border-radius: var(--radius);
-    border: 1px solid var(--glass);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-md);
     margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+.avg-section:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
 .avg-grid {
@@ -668,11 +692,15 @@ main > * {
 }
 
 .avg-card {
-    background: var(--bg-main);
-    padding: 0.75rem;
+    background: rgba(255,255,255,0.5);
+    padding: 1rem;
     border-radius: 8px;
     text-align: center;
-    border: 1px solid var(--glass);
+    border: 1px solid var(--glass-border);
+    transition: transform 0.2s ease;
+}
+.avg-card:hover {
+    transform: translateY(-2px);
 }
 
 .avg-subj {
@@ -706,13 +734,20 @@ main > * {
 
 /* ── Pomodoro / Timer ── */
 .timer-panel {
-    background: var(--bg-card);
-    padding: 1.25rem;
+    background: rgba(255,255,255,0.5) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1.5rem;
     border-radius: var(--radius);
-    border: 1px solid var(--glass);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--shadow-sm);
     text-align: center;
     margin-top: 1rem;
+    transition: transform 0.3s ease;
+}
+.timer-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .timer-display {
