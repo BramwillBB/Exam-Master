@@ -736,7 +736,7 @@ function renderExamTimetable() {
                 <span class="tt-status">${statusIcon}</span>
                 <span class="tt-subject">${exam.subject}</span>
                 <span class="tt-paper">${exam.paper}</span>
-                <span class="tt-date">${dayName} ${exam.dateStr}</span>
+                <span class="tt-date">${dayName} ${exam.dateStr.replace(' 2026', '')} 14:00</span>
             </div>`;
     });
 
