@@ -29,7 +29,7 @@ body {
     background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
     color: var(--text-main);
     display: grid;
-    grid-template-columns: 280px 1fr 310px; /* Increased nav width */
+    grid-template-columns: 330px 1fr 310px; /* Increased nav width */
     height: 100vh;
     overflow: hidden;
     transition: grid-template-columns 0.3s ease;
@@ -37,17 +37,17 @@ body {
 
 /* ── Responsive Scaling ── */
 @media (max-width: 1400px) {
-    body { grid-template-columns: 240px 1fr 270px; }
+    body { grid-template-columns: 280px 1fr 270px; }
     :root { font-size: 15px; }
 }
 
 @media (max-width: 1100px) {
-    body { grid-template-columns: 200px 1fr 240px; }
+    body { grid-template-columns: 240px 1fr 240px; }
     :root { font-size: 14px; }
 }
 
 @media (max-width: 900px) {
-    body { grid-template-columns: 200px 1fr 0px; }
+    body { grid-template-columns: 240px 1fr 0px; }
     .stats-aside { display: none; }
 }
 
@@ -112,8 +112,8 @@ body {
     aside {
         position: fixed;
         top: 0;
-        left: -300px;
-        width: 280px;
+        left: -320px;
+        width: 320px;
         height: 100vh;
         z-index: 1000;
         transition: left 0.3s ease;
@@ -335,8 +335,8 @@ body {
         content: '';
         position: fixed;
         top: 0;
-        left: 280px;
-        width: calc(100vw - 280px);
+        left: 320px;
+        width: calc(100vw - 320px);
         height: 100vh;
         background: rgba(0,0,0,0.4);
         z-index: -1;
@@ -920,4 +920,118 @@ main > * {
 @keyframes pomodoroFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/* ── Exam Timetable ── */
+.exam-timetable-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.tt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    max-height: 192px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
+
+.tt-list::-webkit-scrollbar { width: 4px; }
+.tt-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
+
+.tt-row {
+    display: grid;
+    grid-template-columns: 24px 120px 35px 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.tt-row:hover {
+    background: rgba(75, 123, 236, 0.04);
+}
+
+.tt-status {
+    font-size: 0.7rem;
+    text-align: center;
+    line-height: 1;
+}
+
+.tt-subject {
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.tt-paper {
+    font-weight: 700;
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(75, 123, 236, 0.08);
+    color: var(--primary);
+    text-align: left;
+}
+
+.tt-date {
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+/* Past exam — completed */
+.tt-row.tt-past {
+    opacity: 0.45;
+    border-left-color: var(--success);
+}
+
+.tt-row.tt-past .tt-subject {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Next exam — highlighted */
+.tt-row.tt-next {
+    background: rgba(75, 123, 236, 0.08);
+    border-left-color: var(--secondary);
+    box-shadow: 0 0 0 1px rgba(250, 130, 49, 0.15);
+    animation: ttPulse 2s ease-in-out infinite;
+}
+
+.tt-row.tt-next .tt-subject {
+    color: var(--primary-dark);
+    font-weight: 800;
+}
+
+.tt-row.tt-next .tt-paper {
+    background: var(--secondary);
+    color: #fff;
+}
+
+/* Upcoming exam — default */
+.tt-row.tt-upcoming {
+    border-left-color: var(--glass);
+}
+
+@keyframes ttPulse {
+    0%, 100% { box-shadow: 0 0 0 1px rgba(250, 130, 49, 0.15); }
+    50% { box-shadow: 0 0 0 2px rgba(250, 130, 49, 0.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tt-row.tt-next {
+        animation: none;
+    }
 }

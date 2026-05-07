@@ -649,19 +649,44 @@ function resetTimer() {
     document.getElementById('timer-start-btn').className = 'timer-btn btn-start';
 }
 
-// ─── Exam Countdown ────────────────────────────────────
-const EXAM_TARGET = new Date(2026, 4, 11, 14, 0, 0); // 11 May 2026 at 14:00
+// ─── Official Exam Timetable (NSC June 2026 Admission Letter) ──
+const EXAM_TIMETABLE = [
+    { subject: 'English HL',       paper: 'P3', date: new Date(2026, 4, 11, 14, 0, 0), dateStr: '11 May 2026' },
+    { subject: 'Afrikaans FAL',    paper: 'P3', date: new Date(2026, 4, 13, 14, 0, 0), dateStr: '13 May 2026' },
+    { subject: 'Mathematics',      paper: 'P1', date: new Date(2026, 4, 15, 14, 0, 0), dateStr: '15 May 2026' },
+    { subject: 'Mathematics',      paper: 'P2', date: new Date(2026, 4, 18, 14, 0, 0), dateStr: '18 May 2026' },
+    { subject: 'Afrikaans FAL',    paper: 'P1', date: new Date(2026, 4, 21, 14, 0, 0), dateStr: '21 May 2026' },
+    { subject: 'Physical Science', paper: 'P1', date: new Date(2026, 4, 22, 14, 0, 0), dateStr: '22 May 2026' },
+    { subject: 'Physical Science', paper: 'P2', date: new Date(2026, 4, 25, 14, 0, 0), dateStr: '25 May 2026' },
+    { subject: 'Life Sciences',    paper: 'P1', date: new Date(2026, 4, 29, 14, 0, 0), dateStr: '29 May 2026' },
+    { subject: 'Life Sciences',    paper: 'P2', date: new Date(2026, 5, 1,  14, 0, 0), dateStr: '01 Jun 2026' },
+    { subject: 'English HL',       paper: 'P1', date: new Date(2026, 5, 4,  14, 0, 0), dateStr: '04 Jun 2026' },
+    { subject: 'Business Studies',  paper: 'P1', date: new Date(2026, 5, 5,  14, 0, 0), dateStr: '05 Jun 2026' },
+    { subject: 'Afrikaans FAL',    paper: 'P2', date: new Date(2026, 5, 10, 14, 0, 0), dateStr: '10 Jun 2026' },
+    { subject: 'English HL',       paper: 'P2', date: new Date(2026, 5, 11, 14, 0, 0), dateStr: '11 Jun 2026' },
+    { subject: 'Business Studies',  paper: 'P2', date: new Date(2026, 5, 12, 14, 0, 0), dateStr: '12 Jun 2026' }
+];
+
+function getNextExam() {
+    const now = new Date();
+    for (const exam of EXAM_TIMETABLE) {
+        if (exam.date > now) return exam;
+    }
+    return null; // All exams done
+}
 
 function updateExamCountdown() {
     const elBanner = document.getElementById('exam-countdown-banner');
     if (!elBanner) return;
 
-    const diff = EXAM_TARGET - new Date();
+    const nextExam = getNextExam();
 
-    if (diff <= 0) {
-        elBanner.innerHTML = `<div style="font-size:1rem;font-weight:800;letter-spacing:2px;color:white;">🎉 EXAM HAS STARTED — GOOD LUCK!</div>`;
+    if (!nextExam) {
+        elBanner.innerHTML = `<div style="font-size:1rem;font-weight:800;letter-spacing:2px;color:white;">🎉 ALL EXAMS COMPLETE — WELL DONE!</div>`;
         return;
     }
+
+    const diff = nextExam.date - new Date();
 
     const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -679,6 +704,49 @@ function updateExamCountdown() {
     if (h) h.textContent = pad(hours);
     if (m) m.textContent = pad(mins);
     if (s) s.textContent = pad(secs);
+
+    // Update the label and date display
+    const labelEl = document.getElementById('cd-exam-label');
+    const dateEl = document.getElementById('cd-exam-date');
+    if (labelEl) labelEl.textContent = `${nextExam.subject} ${nextExam.paper}`;
+    if (dateEl) dateEl.textContent = `${nextExam.dateStr} @ 14:00`;
+}
+
+// ─── Exam Timetable Rendering ──────────────────────────
+function renderExamTimetable() {
+    const container = document.getElementById('exam-timetable-list');
+    if (!container) return;
+
+    const now = new Date();
+    const nextExam = getNextExam();
+    let html = '';
+
+    EXAM_TIMETABLE.forEach((exam, idx) => {
+        const isPast = exam.date < now;
+        const isNext = nextExam && exam.date.getTime() === nextExam.date.getTime();
+        const dayName = exam.date.toLocaleDateString('en-GB', { weekday: 'short' });
+
+        let statusClass = 'tt-upcoming';
+        let statusIcon = '⏳';
+        if (isPast) { statusClass = 'tt-past'; statusIcon = '✅'; }
+        else if (isNext) { statusClass = 'tt-next'; statusIcon = '🔥'; }
+
+        html += `
+            <div class="tt-row ${statusClass}" data-index="${idx}">
+                <span class="tt-status">${statusIcon}</span>
+                <span class="tt-subject">${exam.subject}</span>
+                <span class="tt-paper">${exam.paper}</span>
+                <span class="tt-date">${dayName} ${exam.dateStr}</span>
+            </div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Scroll the next exam into view
+    requestAnimationFrame(() => {
+        const nextRow = container.querySelector('.tt-next');
+        if (nextRow) nextRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
 }
 
 // ─── Init ───────────────────────────────────────────────
@@ -702,6 +770,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAverages();
         updateSessionCount();
         renderTimer();
+        renderExamTimetable();
     } catch (e) {
         console.error("Initialization error:", e);
     }

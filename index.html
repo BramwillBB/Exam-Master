@@ -29,7 +29,7 @@
         </nav>
 
         <!-- Pomodoro Timer -->
-        <section class="timer-panel" id="pomodoro-panel" style="margin-bottom: 1.5rem; border: 1px solid var(--primary); background: rgba(75, 123, 236, 0.03);">
+        <section class="timer-panel" id="pomodoro-panel" style="margin-bottom: 1rem; border: 1px solid var(--primary); background: rgba(75, 123, 236, 0.03);">
             <div class="timer-label" id="timer-label" style="text-align: center; font-weight: 800; color: var(--primary);">Pomodoro</div>
             <div class="timer-mode-btns" style="transform: scale(0.8); margin-bottom: 0.25rem;">
                 <button class="mode-btn active" onclick="setTimerMode('pomodoro')">40</button>
@@ -46,6 +46,14 @@
             <div class="timer-btns" style="gap: 0.25rem;">
                 <button class="timer-btn btn-start" id="timer-start-btn" onclick="toggleTimer()" style="flex: 2; font-size: 0.75rem; padding: 0.5rem;">Start / Pause</button>
                 <button class="timer-btn btn-reset" onclick="resetTimer()" style="flex: 1; font-size: 0.75rem; padding: 0.5rem;">Reset</button>
+            </div>
+        </section>
+
+        <!-- Exam Timetable -->
+        <section class="timer-panel exam-timetable-panel" style="flex: 0 0 auto; max-height: 240px; padding: 0.75rem; overflow: hidden; margin-top: 0;">
+            <div class="timer-label" style="text-align: center; margin-bottom: 0.5rem;">📅 Exam Timetable</div>
+            <div id="exam-timetable-list" class="tt-list">
+                <!-- Rendered by JS -->
             </div>
         </section>
 
@@ -84,7 +92,8 @@
     <aside class="stats-aside">
         <!-- Compact Exam Countdown -->
         <section class="timer-panel" id="exam-countdown-banner" style="background: var(--primary); color: white; border: none; margin-top: 0;">
-            <div class="timer-label" style="color: rgba(255,255,255,0.8); margin-bottom: 0.75rem;">Time to First Paper</div>
+            <div id="cd-exam-label" style="font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 0.25rem; color: rgba(255,255,255,0.95);">Next Paper</div>
+            <div class="timer-label" style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem; font-size: 0.6rem;">TIME TO NEXT PAPER</div>
             <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: baseline;">
                 <div style="text-align: center;">
                     <div id="cd-days" style="font-size: 1.5rem; font-weight: 800; line-height: 1;">00</div>
@@ -106,8 +115,10 @@
                     <div style="font-size: 0.5rem; opacity: 0.8; text-transform: uppercase;">Sec</div>
                 </div>
             </div>
-            <div style="font-size: 0.6rem; margin-top: 0.75rem; opacity: 0.7; font-weight: 600; text-align: center;">11 MAY 2026 @ 14:00</div>
+            <div id="cd-exam-date" style="font-size: 0.6rem; margin-top: 0.75rem; opacity: 0.7; font-weight: 600; text-align: center;">Loading...</div>
         </section>
+
+
 
         <!-- Overall Progress -->
         <section class="timer-panel">
