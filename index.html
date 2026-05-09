@@ -72,6 +72,7 @@
                 <h1 id="main-title" style="color: var(--primary); letter-spacing: 1px; font-size: 1.5rem;">STUDY PLAN</h1>
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 4px;">
                     <p style="color: var(--text-muted); font-size: 0.75rem; margin: 0;">Preparation Phase • June 2026</p>
+                    <button onclick="document.getElementById('calendar-modal').style.display='flex'; renderCalendarView();" style="background: rgba(75, 123, 236, 0.1); color: var(--primary); border: 2px solid rgba(75, 123, 236, 0.3); border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: all 0.2s;">📅 CALENDAR VIEW</button>
                     <button onclick="document.getElementById('rules-modal').style.display='flex'" style="background: rgba(75, 123, 236, 0.1); color: var(--primary); border: 2px solid rgba(75, 123, 236, 0.3); border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: all 0.2s;">📋 VIEW RULES</button>
                 </div>
             </div>
@@ -297,6 +298,19 @@
                 <li><strong>13:30 Lunch Break:</strong> Eat away from the desk. Get outside/stretch for 15 mins. Avoid mental strain (no phones/books).</li>
                 <li><strong>Micro-Breaks:</strong> Stand up, hydrate, and look out a window to relax eye strain. No phones.</li>
             </ul>
+        </div>
+    </div>
+
+    <!-- CALENDAR MODAL -->
+    <div id="calendar-modal" class="pomodoro-modal" style="display: none; z-index: 2000;" onclick="if(event.target === this) this.style.display='none'">
+        <div class="modal-content" style="max-width: 800px; width: 95%; text-align: left; padding: 2.5rem; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h2 style="color: var(--primary); margin: 0; font-size: 1.5rem;">📅 Exam Calendar</h2>
+                <button onclick="document.getElementById('calendar-modal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            <div id="calendar-view-container">
+                <!-- JS will populate the calendar here -->
+            </div>
         </div>
     </div>
 

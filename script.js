@@ -778,3 +778,75 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. AUTOMATIC CLOUD SYNC (non-blocking, no user action required)
     initAutoSync().catch(err => console.warn('Auto-sync error:', err));
 });
+
+// ─── Calendar View Rendering ───────────────────────────────
+function renderCalendarView() {
+    const container = document.getElementById('calendar-view-container');
+    if (!container) return;
+    
+    // Group exams by YYYY-MM-DD
+    const examsByDate = {};
+    EXAM_TIMETABLE.forEach(exam => {
+        const d = exam.date;
+        const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        if (!examsByDate[key]) examsByDate[key] = [];
+        examsByDate[key].push(exam);
+    });
+
+    const monthsToRender = [
+        { year: 2026, month: 4, name: 'May 2026' }, // 4 is May
+        { year: 2026, month: 5, name: 'June 2026' } // 5 is June
+    ];
+
+    let html = '';
+    
+    monthsToRender.forEach(m => {
+        html += `<h3 style="margin: 1.5rem 0 0.5rem 0; color: var(--primary); border-bottom: 2px solid var(--glass); padding-bottom: 0.5rem;">${m.name}</h3>`;
+        html += `<div class="calendar-grid">`;
+        
+        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        daysOfWeek.forEach(d => {
+            html += `<div class="cal-day-header">${d}</div>`;
+        });
+        
+        const firstDay = new Date(m.year, m.month, 1);
+        const lastDay = new Date(m.year, m.month + 1, 0);
+        
+        // 0 for Mon, 6 for Sun
+        let startDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; 
+        
+        // Empty slots
+        for (let i = 0; i < startDayOfWeek; i++) {
+            html += `<div class="cal-day empty"></div>`;
+        }
+        
+        // Days
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            const currentDate = new Date(m.year, m.month, i);
+            const key = `${m.year}-${m.month}-${i}`;
+            const examsToday = examsByDate[key] || [];
+            
+            const isToday = new Date().toDateString() === currentDate.toDateString();
+            const bgStyle = isToday ? 'background: rgba(250, 130, 49, 0.1); border-color: var(--secondary);' : '';
+            
+            html += `<div class="cal-day" style="${bgStyle}">`;
+            html += `<div class="cal-date" style="${isToday ? 'color: var(--secondary);' : ''}">${i}</div>`;
+            
+            examsToday.forEach(ex => {
+                const isPast = ex.date < new Date();
+                const pastClass = isPast ? 'exam-past' : '';
+                html += `
+                    <div class="cal-event ${pastClass}">
+                        <div class="cal-event-subject">${ex.subject} ${ex.paper}</div>
+                        <div class="cal-event-time">14:00</div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+        }
+        html += `</div>`;
+    });
+    
+    container.innerHTML = html;
+}

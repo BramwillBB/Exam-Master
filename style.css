@@ -1035,3 +1035,60 @@ main > * {
         animation: none;
     }
 }
+
+/* ── Calendar View ── */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+}
+.cal-day-header {
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--glass);
+}
+.cal-day {
+    background: var(--bg-main);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    min-height: 100px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.cal-day.empty {
+    background: transparent;
+    border-color: transparent;
+}
+.cal-date {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.cal-event {
+    background: rgba(75, 123, 236, 0.1);
+    border-left: 3px solid var(--primary);
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    line-height: 1.2;
+}
+.cal-event.exam-past {
+    opacity: 0.6;
+    border-left-color: var(--success);
+}
+.cal-event-subject {
+    font-weight: 700;
+    color: var(--text-main);
+}
+.cal-event-time {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.6rem;
+}
